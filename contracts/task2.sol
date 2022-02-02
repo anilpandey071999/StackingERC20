@@ -11,8 +11,8 @@ contract Task2 is ERC20{
     address owner;
     address[] delegate;
 
-    constructor(address _owners,uint256 _initialSupply) ERC20("Ka","k"){
-        owner = _owners;
+    constructor(uint256 _initialSupply) ERC20("Ka","k"){
+        owner = msg.sender;
         _mint(owner,(_initialSupply * (10 ** 18)));
     }
 
