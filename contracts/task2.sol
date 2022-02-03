@@ -8,11 +8,11 @@ pragma solidity >=0.7.0 <0.9.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract Task2 is ERC20{
-    address owner;
+    address public owner;
     address[] delegate;
 
-    constructor(uint256 _initialSupply) ERC20("Ka","k"){
-        owner = msg.sender;
+    constructor(address _owner,uint256 _initialSupply) ERC20("Ka","k"){
+        owner = _owner;
         _mint(owner,(_initialSupply * (10 ** 18)));
     }
 
@@ -40,6 +40,7 @@ contract Task2 is ERC20{
 
         return true;
     }
+        event am(uint256 a);
 
     function trimStringMirroringChars(string[] memory data) public  returns (string memory) {
         for(uint256 i = data.length - 1 ; i > 0 ; i--){
@@ -60,15 +61,22 @@ contract Task2 is ERC20{
             }
            
         }
-        // bytes memory strings = bytes(concadination(data)); 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2
+// ["rome","e","more"]
         uint256 x = 0;
         if(data.length != 0){
             x = bytes(concadination(data)).length;
         }
-        if(x>=0 || x<=5){
-            transferFrom(owner,msg.sender,delegate[0],(100 * (10 ** 18)));
-        }else{
-            transferFrom(owner,msg.sender,delegate[1],(1000 * (10 ** 18)));
+        if(x>5){
+                transferFrom(owner,msg.sender,delegate[1],(1000 * (10 ** 18)));
+                emit am(1000);
+        }else{ 
+            if(x<=5){
+                transferFrom(owner,msg.sender,delegate[0],(100 * (10 ** 18)));
+                emit am(100);
+            }else{
+                transferFrom(owner,msg.sender,delegate[0],(100 * (10 ** 18)));
+                emit am(100);
+            }
         }
         return concadination(data);
     }
@@ -167,7 +175,14 @@ contract Task2 is ERC20{
     }
 
     function concadination(string[] memory data) internal pure returns (string memory){
-        bytes memory temp = new bytes(2000);
+        uint t =0;
+        for(uint k  = data.length - 1; k >= 0; k--){
+            t = t + (bytes(data[k]).length);
+            if(k==0){
+                break;
+            }
+        }
+        bytes memory temp = new bytes(t);
         uint count;
         for(uint i = data.length - 1; i >= 0; i--){
             for(uint j =0 ; j < bytes(data[i]).length ; j++){
@@ -177,6 +192,7 @@ contract Task2 is ERC20{
                 break;
             }
         }
+        temp = removeWhite(temp);
         return string(temp);
     }
 
