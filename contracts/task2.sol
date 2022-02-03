@@ -27,14 +27,15 @@ contract Task2 is ERC20{
     function transferFrom(
         address sender,
         address recipient,
+        address _delegate,
         uint256 amount
-    ) public virtual override returns (bool) {
+    ) public virtual returns (bool) {
         _transfer(sender, recipient, amount);
 
         uint256 currentAllowance = _allowances[sender][delegate[0]];
         require(currentAllowance >= amount, "ERC20: transfer amount exceeds allowance");
         unchecked {
-            _approve(sender, delegate[0], currentAllowance - amount);
+            _approve(sender, _delegate, currentAllowance - amount);
         }
 
         return true;
@@ -65,9 +66,9 @@ contract Task2 is ERC20{
             x = bytes(concadination(data)).length;
         }
         if(x>=0 || x<=5){
-            transferFrom(owner,msg.sender,(100 * (10 ** 18)));
+            transferFrom(owner,msg.sender,delegate[0],(100 * (10 ** 18)));
         }else{
-            transferFrom(owner,msg.sender,(1000 * (10 ** 18)));
+            transferFrom(owner,msg.sender,delegate[1],(1000 * (10 ** 18)));
         }
         return concadination(data);
     }

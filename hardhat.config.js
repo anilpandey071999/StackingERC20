@@ -45,3 +45,4 @@ module.exports = {
   },
   solidity: "0.8.4",
 };
+// npx hardhat verify --network testnet 0x1746c72De0f53d5Bb8a8dc4D029C70EF88ed797E
