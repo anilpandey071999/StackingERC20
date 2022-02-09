@@ -22,10 +22,12 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 module.exports = {
   defaultNetwork: "testnet",
   networks: {
-    localhost: {
-      url: "http://127.0.0.1:8545"
-    },
+    // localhost: {
+    //   url: "http://127.0.0.1:8545",
+    //   chainId: 31337
+    // },
     hardhat: {
+      chainId: 1337
     },
     testnet: {
       url: "https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",

@@ -14,12 +14,15 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const Greeter = await hre.ethers.getContractFactory("Task2");
-  const greeter = await Greeter.deploy(1000000);
+  const LPToken = await hre.ethers.getContractFactory("StackingERC20");
+  const LP_Token = await LPToken.deploy();
+  await LP_Token.deployed();
+  console.log("Greeter deployed to:", LP_Token.address);
 
-  await greeter.deployed();
-
-  console.log("Greeter deployed to:", greeter.address);
+  const StackingContract = await hre.ethers.getContractFactory("stackingCoin");
+  const stackingContract = await StackingContract.deploy(LP_Token.address);
+  await stackingContract.deployed();
+  console.log("Greeter deployed to:", stackingContract.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
