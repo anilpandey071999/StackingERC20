@@ -17,8 +17,8 @@ contract StackingERC20 is ERC20{
 contract stackingCoin {
     ERC20 token;
     // block
-    mapping(address => uint256) stackingtokens;
-    mapping(address => uint256) stackingtime;
+    mapping(address => uint256) public stackingtokens;
+    mapping(address => uint256) public stackingtime;
     constructor(ERC20 _token){
         token = _token;
     }
@@ -41,5 +41,11 @@ contract stackingCoin {
         uint256 reword = ((((totaltime / 3600) * 5) * stackingtokens[msg.sender])/100) + stackingtokens[msg.sender];
         // uint256 reword =  (((1*5) * stackingtokens[msg.sender])/100) + stackingtokens[msg.sender];
         token.transfer(msg.sender,reword);
+        stackingtokens[msg.sender] = 0;
+    }
+
+    function reamingTime() public view returns(uint256 remainingTime,uint256 currentBlockTime,uint256 stackingTime) {
+        uint256 totaltime = block.timestamp - stackingtime[msg.sender];
+        return (totaltime,block.timestamp,stackingtime[msg.sender]);
     }
 }
