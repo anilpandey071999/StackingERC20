@@ -15,8 +15,8 @@ import {
 } from "react-bootstrap";
 import "../App.css";
 
-const contractAddress = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
-const tokenAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
+const contractAddress = "0xDce073ee2c3C9ad7C6F26BCDbbf7eF13001b2464";
+const tokenAddress = "0x0e88B4F60a070aEAc9938b322f35988B90a17877";
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 
@@ -42,28 +42,43 @@ function Home() {
   const [stackingAmount, setFname] = useState(0);
   const [errors, setErrors] = useState("");
   const [timer, setTime] = useState(0);
-  const [show, setShow] = useState(true);
+  const [getStackAmount, setAmount] = useState(0);
 
   const handleChange = (e) => {
     setFname(e.target.value);
   };
   useEffect(() => {
     timers();
-    setInterval(()=>{
+    setTimeout(()=>{
       timers();
     },10000)
+    stackAmount();
     checkAllowance();
     contractBalance();
   });
+
+  const stackAmount = async () => {
+    try {
+      const amount = await stackingContract.stackingtokens(account);
+      console.log("amount",amount);
+      setAmount(ethers.utils.formatEther(amount.toString()));
+    } catch (error) {
+      setTimeout(() => {
+        setErrors("");
+      }, 10000);
+      setErrors(error.message);
+    }
+  }
+
   const contractBalance = async () => {
     try {
       const _contractBalance = await tokenContract.balanceOf(contractAddress);
       setBalance(ethers.utils.formatEther(_contractBalance.toString()));
     } catch (error) {
-      setInterval(() => {
+      setTimeout(() => {
         setErrors("");
-      }, 700);
-      setErrors(error.data.message);
+      }, 10000);
+      setErrors(error.message);
     }
   };
 
@@ -80,10 +95,10 @@ function Home() {
         );
       }
     } catch (error) {
-      setInterval(() => {
+      setTimeout(() => {
         setErrors("");
-      }, 700);
-      setErrors(error.data.message);
+      }, 10000);
+      setErrors(error.message);
     }
   };
 
@@ -91,10 +106,10 @@ function Home() {
     try {
       await stackingContract.stackingToken(stackingAmount);
     } catch (error) {
-      setInterval(() => {
+      setTimeout(() => {
         setErrors("");
-      }, 700);
-      setErrors(error.data.message);
+      }, 10000);
+      setErrors(error.message);
     }
   };
 
@@ -102,35 +117,35 @@ function Home() {
     try {
       await stackingContract.withdrawal();
     } catch (error) {
-      setInterval(() => {
+      setTimeout(() => {
         setErrors("");
-      }, 700);
-      setErrors(error.data.message);
+      }, 10000);
+      setErrors(error.message);
     }
   };
 
   const timers = async () => {
     try {
       let a = await stackingContract.reamingTime();
-      console.log("Timer-> ", a);
+      // console.log("Timer-> ", a);
       //    new Date(a.stackingTime.toString());
       let remaingTime =
         3600 -
         (parseInt(a.currentBlockTime.toString()) -
           parseInt(a.stackingTime.toString()));
-      console.log(
-        "date->",
-        3600,
-        (remaingTime / 60),
-        (parseInt(a.currentBlockTime.toString()) -
-          parseInt(a.stackingTime.toString()))
-      );
+      // console.log(
+      //   "date->",
+      //   3600,
+      //   (remaingTime / 60),
+      //   (parseInt(a.currentBlockTime.toString()) -
+      //     parseInt(a.stackingTime.toString()))
+      // );
       setTime(remaingTime / 60);
     } catch (error) {
-      setInterval(() => {
+      setTimeout(() => {
         setErrors("");
-      }, 700);
-      setErrors(error.data.message);
+      }, 10000);
+      setErrors(error.message);
     }
   };
 
@@ -138,10 +153,9 @@ function Home() {
     <div>
       <WalletBalance />
 
-      {errors ? (
-        <Alert variant="danger" onClose={() => setShow(false)} dismissible>
-          {" "}
-          {errors}{" "}
+      {(errors!="") ? (
+        <Alert variant="danger" onClose={() => setShow(false)} >
+          {errors}
         </Alert>
       ) : (
         <br></br>
@@ -183,7 +197,8 @@ function Home() {
               top: "65%",
               left: "10%",
             }}>
-            Withdrawal after:- {timer < 0 ? 0 : timer} min <br></br>
+            Withdrawal after:- {timer < 0 ? 0 : timer} min  <br></br>
+            Your Stacked Amount:- {getStackAmount}
           </Card.Text>
           <Button
             variant="outline-primary"
@@ -200,47 +215,6 @@ function Home() {
           </Button>{" "}
         </Card.Body>
       </Card>
-
-      {/* <div
-        style={{
-          position: "absolute",
-          left: "80%",
-          top: "10%",
-          // transform: "translate(-50%, -50%)",
-        }}
-      >
-        <div style={{ border: "1px solid black", padding: 20 }}>
-          <div className="row">
-            <div className="col-md-12">
-              <Form.Group className="mb-3">
-                <h5>Contract Balance:- {balance}</h5>
-                <Form.Label htmlFor="inputPassword5">
-                  Enter Stacking Amount{" "}
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  value={stackingAmount}
-                  onChange={handleChange}
-                  style={{ marginBottom: 10 }}
-                />
-                <Button variant="outline-primary" onClick={() => stackToken()}>
-                  Primary
-                </Button>{" "}
-              </Form.Group>
-              <Form.Group className="mb-3">
-                Withdrawal after:- {timer < 0 ? 0 : timer} min <br></br>
-                <Button
-                  variant="outline-primary"
-                  onClick={() => withdrawal()}
-                  style={{ marginTop: 10 }}
-                >
-                  withdrawal
-                </Button>{" "}
-              </Form.Group>
-            </div>
-          </div>
-        </div>
-      </div> */}
     </div>
   );
 }
